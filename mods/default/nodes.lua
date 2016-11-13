@@ -1,4 +1,29 @@
 -- mods/default/nodes.lua
+minetest.register_node("default:apple", {
+	description = "Apple",
+	drawtype = "plantlike",
+	visual_scale = 1.0,
+	tiles = {"default_apple.png"},
+	inventory_image = "default_apple.png",
+	paramtype = "light",
+	sunlight_propagates = true,
+	walkable = false,
+	is_ground_content = false,
+	selection_box = {
+		type = "fixed",
+		fixed = {-3 / 16, -7 / 16, -3 / 16, 3 / 16, 4 / 16, 3 / 16}
+	},
+	groups = {fleshy = 3, dig_immediate = 3, flammable = 2,
+		leafdecay = 3, leafdecay_drop = 1},
+	on_use = minetest.item_eat(2),
+	sounds = default.node_sound_leaves_defaults(),
+
+	after_place_node = function(pos, placer, itemstack)
+		if placer:is_player() then
+			minetest.set_node(pos, {name = "default:apple", param2 = 1})
+		end
+	end,
+})
 
 minetest.register_node("default:stone", {
 	description = "Stone",
@@ -38,7 +63,7 @@ minetest.register_node("default:gold", {
 	stack_max = 64,
 	sounds = default.node_sound_stone_defaults(),
 })
-	
+
 minetest.register_node("default:stone_with_diamond", {
 	description = "Diamonds in Stone",
 	tiles = {"default_stone.png^default_mineral_diamond.png"},
@@ -222,18 +247,34 @@ minetest.register_node("default:junglesapling", {
 	inventory_image = "default_junglesapling.png",
 	wield_image = "default_junglesapling.png",
 	paramtype = "light",
+	sunlight_propagates = true,
 	walkable = false,
+	on_timer = default.grow_sapling,
 	selection_box = {
 		type = "fixed",
-		fixed = {-0.3, -0.5, -0.3, 0.3, 0.35, 0.3}
+		fixed = {-4 / 16, -0.5, -4 / 16, 4 / 16, 7 / 16, 4 / 16}
 	},
-	stack_max = 64,
-	groups = {dig_immediate=3,flammable=2,attached_node=1},
-	sounds = default.node_sound_defaults(),
+	groups = {snappy = 2, dig_immediate = 3, flammable = 2,
+		attached_node = 1, sapling = 1},
+	sounds = default.node_sound_leaves_defaults(),
+
+	on_construct = function(pos)
+		minetest.get_node_timer(pos):start(math.random(2400,4800))
+	end,
+
+	on_place = function(itemstack, placer, pointed_thing)
+		itemstack = default.sapling_on_place(itemstack, placer, pointed_thing,
+			"default:junglesapling",
+			-- minp, maxp to be checked, relative to sapling pos
+			-- minp_relative.y = 1 because sapling pos has been checked
+			{x = -2, y = 1, z = -2},
+			{x = 2, y = 15, z = 2},
+			-- maximum interval of interior volume check
+			4)
+
+		return itemstack
+	end,
 })
--- aliases for tree growing abm in content_abm.cpp
-minetest.register_alias("sapling", "default:sapling")
-minetest.register_alias("junglesapling", "default:junglesapling")
 
 minetest.register_node("default:junglegrass", {
 	description = "Jungle Grass",
@@ -1034,13 +1075,13 @@ minetest.register_abm({
 		local srclist = inv:get_list("src")
 		local cooked = nil
 		local aftercooked
-		
+
 		if srclist then
 			cooked, aftercooked = minetest.get_craft_result({method = "cooking", width = 1, items = srclist})
 		end
-		
+
 		local was_active = false
-		
+
 		if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
 			was_active = true
 			meta:set_float("fuel_time", meta:get_float("fuel_time") + 1)
@@ -1058,7 +1099,7 @@ minetest.register_abm({
 				meta:set_string("src_time", 0)
 			end
 		end
-		
+
 		if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
 			local percent = math.floor(meta:get_float("fuel_time") /
 					meta:get_float("fuel_totaltime") * 100)
@@ -1081,7 +1122,7 @@ minetest.register_abm({
 		local cooked = nil
 		local fuellist = inv:get_list("fuel")
 		local srclist = inv:get_list("src")
-		
+
 		if srclist then
 			cooked = minetest.get_craft_result({method = "cooking", width = 1, items = srclist})
 		end
@@ -1107,7 +1148,7 @@ minetest.register_abm({
 
 		meta:set_string("fuel_totaltime", fuel.time)
 		meta:set_string("fuel_time", 0)
-		
+
 		inv:set_stack("fuel", 1, afterfuel.items[1])
 	end,
 })
@@ -1166,6 +1207,7 @@ minetest.register_node("default:obsidian", {
 	groups = {cracky=default.dig.obsidian},
 })
 
+--[[ fixme
 minetest.register_node("default:sapling", {
 	description = "Sapling",
 	drawtype = "plantlike",
@@ -1182,6 +1224,44 @@ minetest.register_node("default:sapling", {
 	stack_max = 64,
 	groups = {dig_immediate=3,flammable=2,attached_node=1},
 	sounds = default.node_sound_defaults(),
+})
+]]
+
+minetest.register_node("default:sapling", {
+	description = "Sapling",
+	drawtype = "plantlike",
+	visual_scale = 1.0,
+	tiles = {"default_sapling.png"},
+	inventory_image = "default_sapling.png",
+	wield_image = "default_sapling.png",
+	paramtype = "light",
+	sunlight_propagates = true,
+	walkable = false,
+	on_timer = default.grow_sapling,
+	selection_box = {
+		type = "fixed",
+		fixed = {-4 / 16, -0.5, -4 / 16, 4 / 16, 7 / 16, 4 / 16}
+	},
+	groups = {snappy = 2, dig_immediate = 3, flammable = 2,
+		attached_node = 1, sapling = 1},
+	sounds = default.node_sound_leaves_defaults(),
+
+	on_construct = function(pos)
+		minetest.get_node_timer(pos):start(math.random(2400,4800))
+	end,
+
+	on_place = function(itemstack, placer, pointed_thing)
+		itemstack = default.sapling_on_place(itemstack, placer, pointed_thing,
+			"default:sapling",
+			-- minp, maxp to be checked, relative to sapling pos
+			-- minp_relative.y = 1 because sapling pos has been checked
+			{x = -2, y = 1, z = -2},
+			{x = 2, y = 6, z = 2},
+			-- maximum interval of interior volume check
+			4)
+
+		return itemstack
+	end,
 })
 
 minetest.register_node("default:dry_shrub", {

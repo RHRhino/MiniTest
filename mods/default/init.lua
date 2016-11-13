@@ -33,7 +33,7 @@ default.dig = {
 	redstone_ore = 18,
 	brick = 19,
 	pressure_plate_stone = 20,
-	
+
 	-- Crumbly (shovel)
 	dirt_with_grass = 1,
 	dirt = 2,
@@ -43,7 +43,7 @@ default.dig = {
 	snow = 6,
 	snowblock = 7,
 	nethersand = 8,
-	
+
 	-- Choppy (axe)
 	tree = 1,
 	wood = 2,
@@ -54,11 +54,11 @@ default.dig = {
 	wooden_door = 7,
 	workbench = 8,
 	pressure_plate_wood=9,
-	
+
 	-- Snappy (shears)
 	leaves = 1,
 	wool = 2,
-	
+
 	-- Dig (tool doesnt matter but count as a use)
 	bed = 1,
 	cactus = 2,
@@ -71,6 +71,7 @@ default.dig = {
 
 -- Load files
 dofile(minetest.get_modpath("default").."/functions.lua")
+dofile(minetest.get_modpath("default").."/trees.lua")
 dofile(minetest.get_modpath("default").."/nodes.lua")
 dofile(minetest.get_modpath("default").."/tools.lua")
 dofile(minetest.get_modpath("default").."/craftitems.lua")
