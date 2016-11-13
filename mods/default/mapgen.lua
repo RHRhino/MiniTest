@@ -222,7 +222,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 					num_water_around = num_water_around + 1 end
 				if num_water_around >= 2 then
 					is_shallow = false
-				end	
+				end
 				if is_shallow then
 					for x1=-divlen,divlen do
 					for z1=-divlen,divlen do
@@ -287,7 +287,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 					end
 				end
 				-- If desert sand, make cactus
-				if ground_y and minetest.env:get_node({x=x,y=ground_y,z=z}).name == "default:desert_sand" then
+				if ground_y and minetest.env:get_node({x=x,y=ground_y,z=z}).name == "default:sand" then
 					default.make_cactus({x=x,y=ground_y+1,z=z}, pr:next(3, 4))
 				end
 			end
@@ -319,7 +319,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 						break
 					end
 				end
-				
+
 				if ground_y then
 					local p = {x=x,y=ground_y+1,z=z}
 					local nn = minetest.env:get_node(p).name
@@ -330,14 +330,14 @@ minetest.register_on_generated(function(minp, maxp, seed)
 						-- If desert sand, add dry shrub
 						if nn == "default:desert_sand" then
 							minetest.env:set_node(p,{name="default:dry_shrub"})
-							
+
 						-- If dirt with grass, add grass
 						elseif nn == "default:dirt_with_grass" then
 							minetest.env:set_node(p,{name="default:grass_"..pr:next(1, 5)})
 						end
 					end
 				end
-				
+
 			end
 		end
 		end
