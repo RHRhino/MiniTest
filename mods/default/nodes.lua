@@ -86,7 +86,7 @@ minetest.register_node("default:dirt_with_grass", {
 	description = "Dirt with Grass",
 	tiles = {"default_grass.png", "default_dirt.png", "default_dirt.png^default_grass_side.png"},
 	is_ground_content = true,
-	groups = {crumbly=default.dig.dirt_with_grass,soil=1},
+	groups = {crumbly=default.dig.dirt_with_grass,soil=1,spreading_dirt_type=1},
 	drop = 'default:dirt',
 	stack_max = 64,
 	sounds = default.node_sound_dirt_defaults({
@@ -98,7 +98,7 @@ minetest.register_node("default:dirt_with_snow", {
 	description = "Dirt with Snow",
 	tiles = {"default_snow.png", "default_dirt.png", "default_dirt.png^default_snow_side.png"},
 	is_ground_content = true,
-	groups = {crumbly=default.dig.dirt_with_grass},
+	groups = {crumbly=default.dig.dirt_with_grass, spreading_dirt_type=1},
 	drop = 'default:dirt',
 	stack_max = 64,
 	sounds = default.node_sound_dirt_defaults({
